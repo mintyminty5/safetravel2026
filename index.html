@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>(경고) 절대 열어보지 말 것: 수상한 체험학습 가이드북</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- 폰트 로드: Pretendard(본문), 티몬몬소리(제목/강조), 나눔펜스크립트(손글씨) -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <link href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/TmonMonsori.woff" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --felt-green: #244223;
+            --card-border: #1a202c; 
+            --paper-bg: #fdfbf7;
+        }
+
+        @font-face {
+            font-family: 'TmonMonsori';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/TmonMonsori.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--felt-green);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            color: #1a202c;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            line-height: 1.5;
+        }
+
+        .board-card {
+            background-color: var(--paper-bg);
+            border: 4px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 6px 8px 0px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        .card-tilted-left { transform: rotate(-2deg); }
+        .card-tilted-right { transform: rotate(1deg); }
+
+        .btn-primary {
+            background-color: #fbbf24;
+            border: 3px solid var(--card-border);
+            border-radius: 8px;
+            box-shadow: 3px 5px 0px rgba(0, 0, 0, 0.4);
+            font-weight: 700;
+            transition: transform 0.1s, box-shadow 0.1s;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .btn-primary:active, .btn-primary:disabled {
+            transform: translate(3px, 5px);
+            box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
+        }
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .option-token {
+            background-color: #ffffff;
+            border: 3px solid #cbd5e1;
+            border-radius: 8px;
+            box-shadow: 2px 3px 0px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .option-token.selected {
+            background-color: #fbbf24;
+            border-color: var(--card-border);
+            box-shadow: inset 2px 3px 0px rgba(0,0,0,0.2);
+            transform: translate(2px, 3px);
+        }
+
+        .letter-tile {
+            background-color: #fef08a;
+            border: 3px solid var(--card-border);
+            border-radius: 6px;
+            box-shadow: 2px 3px 0px rgba(0,0,0,0.3);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+        .letter-tile.selected {
+            background-color: #ef4444;
+            color: white;
+            transform: translate(2px, 3px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+
+        .font-title { font-family: 'TmonMonsori', sans-serif; }
+        .font-hand { font-family: 'Nanum Pen Script', cursive; font-size: 1.7rem; letter-spacing: 0.5px; }
+
+        .life-token {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #ef4444;
+            border: 2px solid #7f1d1d;
+            box-shadow: 1px 2px 3px rgba(0,0,0,0.4), inset 2px 2px 4px rgba(255,255,255,0.4);
+            display: inline-block;
+            margin: 0 2px;
+        }
+        .life-token.empty {
+            background: #d1d5db;
+            box-shadow: inset 1px 2px 3px rgba(0,0,0,0.3);
+            border-color: #9ca3af;
+        }
+
+        .modal-card {
+            background-color: var(--paper-bg);
+            border: 4px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 8px 12px 20px rgba(0,0,0,0.6);
+            padding: 1.5rem;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 100 V 0 H 100' fill='none' stroke='%23e5e7eb' stroke-width='1'/%3E%3C/svg%3E");
+            background-size: 20px 20px;
+        }
+        .modal-card.error { border-color: #dc2626; }
+
+        .damage-flash { animation: damageFlash 0.4s; }
+        @keyframes damageFlash {
+            0% { background-color: #ef4444; }
+            100% { background-color: var(--felt-green); }
+        }
+
+        @keyframes shakeReject {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-10px, 5px) rotate(-5deg); }
+            50% { transform: translate(10px, -5px) rotate(5deg); }
+            75% { transform: translate(-10px, -5px) rotate(-5deg); }
+        }
+        .shake-reject { animation: shakeReject 0.4s ease-in-out; background-color: #fca5a5 !important; border-color: #b91c1c !important; }
+        .packed-item { transform: scale(0); opacity: 0; pointer-events: none; transition: all 0.3s ease; }
+
+        ::-webkit-scrollbar { display: none; }
+
+        #app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .doc-slide-up { transform: translateY(-90px) rotate(-2deg); z-index: 25 !important; }
+        .envelope-tear { animation: tearAway 1s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes tearAway {
+            0% { transform: scale(1) translateY(0); opacity: 1; }
+            20% { transform: scale(1.05) translateY(10px) rotate(-2deg); }
+            100% { transform: scale(1.5) translateY(-150px) rotate(5deg); opacity: 0; filter: blur(4px); }
+        }
+        
+        .deal-animation { animation: dealCard 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards; }
+        @keyframes dealCard {
+            0% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .route-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; }
+        .route-animate { animation: drawRoute 2.5s ease-out forwards; }
+        @keyframes drawRoute { to { stroke-dashoffset: 0; } }
+        
+        .map-dot { transform: scale(0); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .dot-appear { transform: scale(1); }
+
+        .flashlight-wrapper {
+            position: relative;
+            background-color: #27272a;
+            overflow: hidden;
+            touch-action: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+        }
+        .flashlight-overlay {
+            position: absolute;
+            inset: 0;
+            background-color: #171717;
+            z-index: 10;
+            pointer-events: none;
+            --x: -100px;
+            --y: -100px;
+            mask-image: radial-gradient(circle 60px at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.95) 100%);
+            -webkit-mask-image: radial-gradient(circle 60px at var(--x) var(--y), transparent 0%, rgba(0,0,0,0.95) 100%);
+        }
+        .flashlight-text {
+            position: absolute;
+            inset: 0;
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.15);
+            line-height: 1.5;
+            pointer-events: none;
+        }
+        .uv-ink {
+            color: #bef264;
+            text-shadow: 0 0 10px rgba(190, 242, 100, 0.8);
+        }
+
+        .envelope-image-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .envelope-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+        }
+    </style>
+</head>
+<body>
+    <div id="app-container">
+        <!-- 상단 헤더 -->
+        <header id="header" class="hidden mt-4 mx-4 mb-2 z-20 flex justify-between items-start">
+            <div class="board-card py-2 px-3 flex flex-col min-w-[120px]">
+                <span class="text-[0.65rem] font-bold text-gray-500">플레이어</span>
+                <span class="text-sm font-black text-gray-800"><i class="fa-solid fa-user-secret mr-1"></i> <span id="display-team"></span></span>
+            </div>
+            <div class="flex flex-col items-end">
+                <div class="board-card py-1 px-2 mb-1 flex items-center bg-gray-100">
+                    <span class="text-[0.65rem] font-bold text-gray-500 mr-2">생존 칩</span>
+                    <div id="chip-container" class="flex"></div>
+                </div>
+                <div class="board-card py-1 px-3 w-full text-center">
+                    <span class="text-[0.65rem] font-bold text-gray-500 mr-1">해독률</span>
+                    <span class="text-sm font-black text-blue-700" id="progress-percent">0%</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 영역 -->
+        <main id="main-content" class="flex-1 p-4 overflow-y-auto pb-24 relative z-10"></main>
+
+        <!-- 하단 단서 슬롯 -->
+        <footer id="footer" class="hidden fixed bottom-4 w-full max-w-[480px] px-4 z-20">
+            <div class="board-card p-2 flex justify-between items-center bg-[#f8fafc]">
+                <span class="text-[0.7rem] font-bold text-gray-600">획득한 키워드:</span>
+                <div class="flex gap-1" id="word-slots"></div>
+            </div>
+        </footer>
+
+        <!-- 모달 (팝업창) -->
+        <div id="modal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-200 p-4">
+            <div id="modal-content" class="modal-card w-full max-w-sm relative transform rotate-1">
+                <div class="absolute -top-4 -left-3 px-3 py-1 border-2 font-bold rounded shadow-sm text-sm" id="modal-tag">알림</div>
+                <h3 id="modal-title" class="text-xl font-black mb-3 mt-2 flex items-center gap-2"></h3>
+                <p id="modal-msg" class="text-sm font-medium mb-6 leading-relaxed text-gray-800 min-h-[60px]"></p>
+                <div class="flex justify-end">
+                    <button id="modal-btn" class="btn-primary px-6 py-2 text-sm bg-blue-500 text-white border-blue-900 shadow-[3px_4px_0_#1e3a8a] hover:bg-blue-600">확인</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ★★★ 여기에 복사해둔 구글 앱스 스크립트 웹앱 주소를 꼭 넣어주세요! ★★★
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxHxZTFawHHnA3PR__GXFvdexF1PrwVK1UekiD1hvTiEXjH7dATmZupxQnE-J3mviC7/exec"; 
+
+        const STATE = {
+            teamName: "",
+            studentInfo: "",
+            studentPledge: "",
+            chips: 5,
+            zone: 0, 
+            words: ["?", "?", "?", "?", "?", "?", "?", "?"], 
+            progress: [0, 11, 22, 33, 44, 55, 66, 77, 88, 95, 100], 
+            tempData: {} 
+        };
+
+        const elMain = document.getElementById('main-content');
+        const elHeader = document.getElementById('header');
+        const elFooter = document.getElementById('footer');
+        const elModal = document.getElementById('modal');
+        const elModalContent = document.getElementById('modal-content');
+
+        window.updateFlashlight = (e) => {
+            e.preventDefault(); 
+            const wrapper = e.currentTarget;
+            const rect = wrapper.getBoundingClientRect();
+            let clientX = e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches && e.touches.length > 0 ? e.touches[0].clientY : e.clientY;
+            
+            const overlay = wrapper.querySelector('.flashlight-overlay');
+            if(overlay) {
+                overlay.style.setProperty('--x', `${clientX - rect.left}px`);
+                overlay.style.setProperty('--y', `${clientY - rect.top}px`);
+            }
+        };
+
+        window.resetFlashlight = (e) => {
+            const wrapper = e.currentTarget;
+            const overlay = wrapper.querySelector('.flashlight-overlay');
+            if(overlay) {
+                overlay.style.setProperty('--x', `-100px`);
+                overlay.style.setProperty('--y', `-100px`);
+            }
+        };
+
+        function typeWriter(elementId, text, speed = 30, callback = null) {
+            const el = document.getElementById(elementId);
+            if(!el) return;
+            el.innerHTML = "";
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    if (text.charAt(i) === '<') {
+                        let tag = '';
+                        while (text.charAt(i) !== '>' && i < text.length) { tag += text.charAt(i); i++; }
+                        tag += '>'; el.innerHTML += tag; i++;
+                    } else {
+                        el.innerHTML += text.charAt(i) === '\n' ? '<br>' : text.charAt(i); i++;
+                    }
+                    setTimeout(type, speed);
+                } else if (callback) { callback(); }
+            }
+            type();
+        }
+
+        function showModal(title, msg, type = 'info', btnText = '다음으로', callback = null) {
+            const isError = type === 'error';
+            elModalContent.className = `modal-card w-full max-w-sm relative transform ${isError ? 'rotate-1 error' : '-rotate-1'}`;
+            
+            const tag = document.getElementById('modal-tag');
+            tag.innerText = isError ? '경고' : '안내';
+            tag.className = `absolute -top-4 -left-3 px-3 py-1 border-2 font-black rounded shadow-sm text-sm font-title tracking-widest ${isError ? 'bg-red-600 border-red-900 text-white' : 'bg-gray-800 border-gray-900 text-white'}`;
+            
+            const titleEl = document.getElementById('modal-title');
+            titleEl.innerHTML = title;
+            titleEl.className = `font-title text-2xl tracking-wide mb-2 mt-2 flex items-center gap-2 border-b-2 pb-2 ${isError ? 'text-red-700 border-red-200' : 'text-blue-800 border-blue-200'}`;
+            
+            document.getElementById('modal-msg').innerHTML = "";
+            typeWriter('modal-msg', msg, 20);
+            
+            const btn = document.getElementById('modal-btn');
+            btn.innerText = btnText;
+            btn.className = `btn-primary px-6 py-2 text-sm text-white shadow-[3px_4px_0_rgba(0,0,0,0.5)] ${isError ? 'bg-red-500 border-red-900 hover:bg-red-600' : 'bg-blue-500 border-blue-900 hover:bg-blue-600'}`;
+            
+            btn.onclick = () => {
+                elModal.classList.add('opacity-0');
+                setTimeout(() => {
+                    elModal.classList.add('hidden');
+                    if (callback) callback();
+                }, 200);
+            };
+
+            elModal.classList.remove('hidden');
+            setTimeout(() => elModal.classList.remove('opacity-0'), 10);
+        }
+
+        function takeDamage(customTitle = null, customMsg = null, callback = null) {
+            if (STATE.chips > 0) {
+                STATE.chips--;
+                updateHeader();
+                document.body.classList.add('damage-flash');
+                setTimeout(() => document.body.classList.remove('damage-flash'), 400);
+                
+                if(STATE.chips === 0) {
+                    showModal('<i class="fa-solid fa-skull"></i> 생존 칩 고갈', '안전 수칙 숙지가 미흡합니다.<br>하지만 교육을 위해 강제로 다음 단계로 넘어갑니다.', 'error', '다음으로', () => nextZone());
+                } else {
+                    showModal(customTitle || '<i class="fa-solid fa-triangle-exclamation"></i> 오답', customMsg || `수칙을 다시 한번 잘 생각해 보세요!<br><br>남은 생존 칩: [ ${STATE.chips} 개 ]`, 'error', '확인', callback);
+                }
+            } else {
+                showModal('<i class="fa-solid fa-skull"></i> 치명적 오류', '더 이상 잃을 칩이 없습니다. 신중하게 선택하세요.', 'error', '확인', callback);
+            }
+        }
+
+        function updateHeader() {
+            document.getElementById('display-team').innerText = STATE.teamName;
+            document.getElementById('progress-percent').innerText = `${STATE.progress[Math.min(STATE.zone, 10)]}%`;
+            
+            let chipsHtml = '';
+            for(let i=0; i<5; i++) {
+                chipsHtml += (i < STATE.chips) ? '<div class="life-token"></div>' : '<div class="life-token empty"></div>';
+            }
+            document.getElementById('chip-container').innerHTML = chipsHtml;
+
+            let slotsHtml = '';
+            for(let i=0; i<8; i++) {
+                if(STATE.words[i] !== '?') {
+                    slotsHtml += `<div class="w-7 h-7 bg-white border-2 border-gray-900 rounded font-black flex items-center justify-center text-sm shadow-[2px_2px_0_rgba(0,0,0,0.2)] font-title">${STATE.words[i]}</div>`;
+                } else {
+                    slotsHtml += `<div class="w-7 h-7 bg-gray-200 border-2 border-gray-400 rounded font-bold flex items-center justify-center text-gray-400 text-[0.6rem] border-dashed">?</div>`;
+                }
+            }
+            document.getElementById('word-slots').innerHTML = slotsHtml;
+        }
+
+        function nextZone() {
+            STATE.zone++;
+            renderCurrentZone();
+            updateHeader();
+        }
+
+        function createStoryBox(idSuffix, title, icon) {
+            return `
+                <div class="board-card mb-6 p-4 pt-8 card-tilted-left deal-animation bg-white" style="animation-delay: 0.1s">
+                    <div class="absolute -top-3 left-4 bg-gray-800 text-white px-3 py-1 font-black rounded text-sm shadow-md border-2 border-gray-900 font-title tracking-wide">
+                        <i class="${icon} mr-1 text-yellow-400"></i> ${title}
+                    </div>
+                    <div class="text-sm text-gray-700 font-medium leading-relaxed min-h-[60px]" id="story-text-${idSuffix}"></div>
+                </div>
+            `;
+        }
+
+        function renderZone0() {
+            elHeader.classList.add('hidden');
+            elFooter.classList.add('hidden');
+            
+            elMain.innerHTML = `
+                <div class="flex flex-col items-center justify-center min-h-[85vh] px-2 w-full max-w-[420px] mx-auto py-8">
+                    <div id="envelope-container" class="relative w-[340px] h-[240px] mb-12 mt-4 perspective-[1000px] deal-animation mx-auto" style="animation-delay: 0.1s">
+                        <div id="envelope-doc" class="absolute left-1/2 top-4 w-[280px] h-[190px] -translate-x-1/2 bg-[#fdfbf7] border-[3px] border-[#1a202c] z-10 flex flex-col items-center justify-center p-2 rounded shadow-xl transition-all duration-[1000ms] ease-out opacity-0">
+                            <div class="absolute -top-3 -right-3 font-title text-red-600 border-[3px] border-red-600 bg-white text-[0.8rem] px-2 py-1 transform rotate-12 shadow-sm tracking-wider z-20">CONFIDENTIAL</div>
+                            <h1 class="font-title text-[#b91c1c] text-4xl leading-tight mb-2 text-center tracking-wider mt-4">절대 열어보지 말 것</h1>
+                            <div class="w-[90%] border-t-[3px] border-dashed border-gray-400 mb-2"></div>
+                            <p class="text-[#1a202c] font-bold text-lg tracking-tight mt-1">수상한 체험학습 가이드북</p>
+                        </div>
+                        <div id="user-envelope-wrapper" class="absolute inset-0 z-20 transition-all duration-[800ms] ease-in-out envelope-image-container bg-transparent">
+                            <img src="envelop.png" alt="비밀 봉투" onerror="this.src='https://placehold.co/340x240/d8ab76/1a202c?text=선생님의+봉투+이미지';">
+                        </div>
+                    </div>
+                    
+                    <div id="input-area" class="board-card w-full p-6 card-tilted-right deal-animation transition-opacity duration-300 relative z-40" style="animation-delay: 0.3s">
+                        <label class="block text-sm font-black text-gray-700 mb-2 uppercase text-center"><i class="fa-solid fa-fingerprint mr-1"></i> 플레이어 등록 (Player Name)</label>
+                        <input type="text" id="team-input" class="w-full bg-white border-2 border-gray-400 rounded-lg p-3 text-lg font-bold focus:outline-none focus:border-blue-500 mb-5 text-center placeholder-gray-300 shadow-inner" placeholder="닉네임(별명)을 적어주세요" autocomplete="off">
+                        <button onclick="startMission()" class="btn-primary font-title w-full py-4 text-xl tracking-wider bg-red-600 border-red-900 shadow-[3px_5px_0px_rgba(127,29,29,0.8)] text-white hover:bg-red-700 relative overflow-hidden">봉투 뜯기</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.startMission = () => {
+            const name = document.getElementById('team-input').value.trim();
+            if(!name) { showModal('신원 미상', '플레이어의 닉네임을 입력하십시오.', 'error'); return; }
+            STATE.teamName = name;
+
+            const envelopeDoc = document.getElementById('envelope-doc');
+            const userEnvelope = document.getElementById('user-envelope-wrapper');
+            const envelopeContainer = document.getElementById('envelope-container');
+            const inputArea = document.getElementById('input-area');
+
+            if(inputArea) inputArea.style.opacity = '0';
+            if(userEnvelope) {
+                userEnvelope.style.transform = 'translateY(150px) rotate(15deg)';
+                userEnvelope.style.opacity = '0';
+            }
+            
+            setTimeout(() => { if(envelopeDoc) { envelopeDoc.classList.remove('opacity-0'); envelopeDoc.classList.add('doc-slide-up'); } }, 400);
+            setTimeout(() => { if(envelopeContainer) envelopeContainer.classList.add('envelope-tear'); }, 2500);
+
+            setTimeout(() => {
+                elHeader.classList.remove('hidden');
+                elFooter.classList.remove('hidden');
+                updateHeader();
+                nextZone();
+            }, 3500);
+        }
+
+        function renderZone1() {
+            STATE.tempData.packedCount = 0;
+            const items = [
+                {id: 1, name: "여벌 옷", icon: "fa-shirt", valid: true}, {id: 2, name: "세면도구", icon: "fa-soap", valid: true},
+                {id: 3, name: "휴대용 게임기", icon: "fa-gamepad", valid: false}, {id: 4, name: "상비약", icon: "fa-pills", valid: true},
+                {id: 5, name: "명품 지갑 등", icon: "fa-gem", valid: false}, {id: 6, name: "충전기/배터리", icon: "fa-battery-full", valid: true},
+                {id: 7, name: "칼/가위류", icon: "fa-scissors", valid: false}, {id: 8, name: "라이터/성냥", icon: "fa-fire", valid: false}
+            ].sort(() => Math.random() - 0.5);
+
+            let html = createStoryBox("1", "첫 번째 단서", "fa-solid fa-suitcase-rolling");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-right deal-animation bg-white" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-check-double text-blue-600 mr-1"></i> 올바른 소지품 챙기기</h3>
+                    <p class="text-xs text-gray-500 font-bold mb-3 break-keep">여행에 필요한 물건만 가방에 드래그해서 넣으세요. <span class="text-red-500">위험하거나 불필요한 물건을 넣으면 가방이 뱉어냅니다!</span> (총 4개)</p>
+                    <div class="grid grid-cols-4 gap-2 mb-6" id="items-grid">
+                        ${items.map(item => `
+                            <div class="draggable-item option-token p-2 flex flex-col items-center justify-center text-center touch-none z-10 bg-white shadow-sm" data-valid="${item.valid}" data-name="${item.name}">
+                                <i class="fa-solid ${item.icon} text-xl text-gray-700 mb-1 pointer-events-none"></i>
+                                <span class="text-[0.6rem] font-bold pointer-events-none break-keep leading-tight text-gray-800">${item.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div id="backpack" class="w-full h-32 bg-[#f8fafc] border-4 border-dashed border-gray-400 rounded-xl flex flex-col items-center justify-center text-gray-400 relative overflow-hidden transition-colors">
+                        <i class="fa-solid fa-backpack text-4xl mb-2"></i>
+                        <span class="text-sm font-bold">여기로 물건을 끌어다 놓으세요</span>
+                        <div id="pack-progress" class="absolute top-2 right-2 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded shadow-sm">0 / 4</div>
+                    </div>
+                </div>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-1', "체험학습 출발 전날 밤입니다.<br>안전하고 즐거운 여행을 위해 꼭 필요한 물건만 선별해서 담으세요.");
+
+            let draggedEl = null; let startX = 0, startY = 0;
+            function startDrag(e) {
+                if (e.target.closest('.draggable-item')) {
+                    draggedEl = e.target.closest('.draggable-item');
+                    if (draggedEl.classList.contains('packed-item')) return;
+                    e.preventDefault(); 
+                    startX = e.clientX || (e.touches && e.touches[0].clientX);
+                    startY = e.clientY || (e.touches && e.touches[0].clientY);
+                    draggedEl.style.transition = 'none'; draggedEl.style.zIndex = '50';
+                    document.addEventListener('mousemove', handleDrag, {passive: false});
+                    document.addEventListener('touchmove', handleDrag, {passive: false});
+                    document.addEventListener('mouseup', endDrag); document.addEventListener('touchend', endDrag);
+                }
+            }
+            function handleDrag(e) {
+                if(!draggedEl) return;
+                e.preventDefault();
+                const dx = (e.clientX || (e.touches && e.touches[0].clientX)) - startX;
+                const dy = (e.clientY || (e.touches && e.touches[0].clientY)) - startY;
+                draggedEl.style.transform = `translate(${dx}px, ${dy}px)`;
+            }
+            function endDrag(e) {
+                if(!draggedEl) return;
+                document.removeEventListener('mousemove', handleDrag); document.removeEventListener('touchmove', handleDrag);
+                document.removeEventListener('mouseup', endDrag); document.removeEventListener('touchend', endDrag);
+                
+                const currentEl = draggedEl; draggedEl = null;
+                const itemRect = currentEl.getBoundingClientRect();
+                const bagRect = document.getElementById('backpack').getBoundingClientRect();
+                const isInside = ((itemRect.left + itemRect.width/2) > bagRect.left && (itemRect.left + itemRect.width/2) < bagRect.right && (itemRect.top + itemRect.height/2) > bagRect.top && (itemRect.top + itemRect.height/2) < bagRect.bottom);
+
+                if (isInside) {
+                    if(currentEl.getAttribute('data-valid') === 'true') {
+                        currentEl.style.transition = 'all 0.3s ease'; currentEl.classList.add('packed-item');
+                        STATE.tempData.packedCount++;
+                        document.getElementById('pack-progress').innerText = `${STATE.tempData.packedCount} / 4`;
+                        document.getElementById('backpack').classList.add('bg-blue-50', 'border-blue-400');
+                        setTimeout(() => document.getElementById('backpack').classList.remove('bg-blue-50', 'border-blue-400'), 300);
+
+                        if(STATE.tempData.packedCount === 4) {
+                            setTimeout(() => {
+                                STATE.words[0] = "우"; 
+                                updateHeader();
+                                showModal('짐 싸기 완료', '필요한 물품을 완벽하게 챙겼습니다! <br><br>첫 번째 글자 <strong class="text-xl text-blue-700 font-title">[우]</strong> 획득 완료.', 'info', '다음 카드로', () => nextZone());
+                            }, 500);
+                        }
+                    } else {
+                        currentEl.style.transition = 'all 0.3s ease'; currentEl.style.transform = 'translate(0, 0)'; currentEl.classList.add('shake-reject');
+                        takeDamage('<i class="fa-solid fa-ban"></i> 반입 금지 물품', `'${currentEl.getAttribute('data-name')}' 은(는) 체험학습에 가져가면 안 되는 물품입니다!`);
+                        setTimeout(() => currentEl.classList.remove('shake-reject'), 400); 
+                    }
+                } else {
+                    currentEl.style.transition = 'all 0.3s ease'; currentEl.style.transform = 'translate(0, 0)';
+                }
+                currentEl.style.zIndex = '10';
+            }
+            document.getElementById('items-grid').addEventListener('mousedown', startDrag);
+            document.getElementById('items-grid').addEventListener('touchstart', startDrag, {passive: false});
+        }
+
+        function renderZone2() {
+            STATE.tempData.z2_q1 = null; STATE.tempData.z2_q2 = null;
+            window.selectZ2 = (q, val) => {
+                STATE.tempData[`z2_q${q}`] = val;
+                document.querySelectorAll(`.z2-q${q}-btn`).forEach(b => { b.classList.remove('bg-blue-100', 'border-blue-500'); b.classList.add('bg-white', 'border-gray-300'); });
+                const btn = document.getElementById(`z2-q${q}-${val}`);
+                btn.classList.remove('bg-white', 'border-gray-300'); btn.classList.add('bg-blue-100', 'border-blue-500');
+            };
+            window.checkZone2 = () => {
+                if (STATE.tempData.z2_q1 !== 2 || STATE.tempData.z2_q2 !== 1) { takeDamage(); return; }
+                STATE.words[1] = "리"; updateHeader();
+                showModal('대처법 확인 완료', '길을 잃었을 때는 <strong>그 자리에 멈춰서 랜드마크나 간판을 찾아 선생님께 연락</strong>하는 것이 가장 중요합니다!<br><br>두 번째 글자 <strong class="text-xl text-blue-700 font-title">[리]</strong> 획득 완료.', 'info', '다음 카드로', () => nextZone());
+            };
+
+            let html = createStoryBox("2", "두 번째 단서", "fa-solid fa-person-circle-question");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-right deal-animation bg-white" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-triangle-exclamation text-red-600 mr-1"></i> 길을 잃었을 때 대처법</h3>
+                    <p class="text-[0.75rem] text-gray-700 font-bold mb-2 bg-yellow-100 p-2 rounded border border-yellow-300">상황 1: 주변을 둘러보니 일행이 보이지 않습니다! 가장 먼저 어떻게 해야 할까요?</p>
+                    <div class="flex flex-col gap-2 mb-5">
+                        <button id="z2-q1-1" onclick="selectZ2(1, 1)" class="z2-q1-btn option-token bg-white border-gray-300 p-3 text-[0.8rem] text-left font-bold text-gray-700">1. 이리저리 혼자 뛰어다닌다.</button>
+                        <button id="z2-q1-2" onclick="selectZ2(1, 2)" class="z2-q1-btn option-token bg-white border-gray-300 p-3 text-[0.8rem] text-left font-bold text-gray-700">2. 일단 그 자리에 멈춰 서서 선생님께 바로 전화를 건다.</button>
+                        <button id="z2-q1-3" onclick="selectZ2(1, 3)" class="z2-q1-btn option-token bg-white border-gray-300 p-3 text-[0.8rem] text-left font-bold text-gray-700">3. 모르는 어른에게 버스로 데려달라고 한다.</button>
+                    </div>
+                    <p class="text-[0.75rem] text-gray-700 font-bold mb-2 bg-yellow-100 p-2 rounded border border-yellow-300">상황 2: 선생님과 통화가 연결되었습니다. 나의 위치를 정확히 알리기 위해 찾아야 할 표식은?</p>
+                    <div class="flex flex-col gap-2">
+                        <button id="z2-q2-1" onclick="selectZ2(2, 1)" class="z2-q2-btn option-token bg-white border-gray-300 p-3 text-[0.8rem] text-left font-bold text-gray-700">1. 간판 이름, 전봇대 번호, 랜드마크 건물</button>
+                        <button id="z2-q2-2" onclick="selectZ2(2, 2)" class="z2-q2-btn option-token bg-white border-gray-300 p-3 text-[0.8rem] text-left font-bold text-gray-700">2. 지나가는 강아지, 하늘의 구름 모양</button>
+                    </div>
+                </div>
+                <button onclick="checkZone2()" class="btn-primary w-full py-4 text-lg deal-animation bg-blue-500 border-blue-900 text-white hover:bg-blue-600 font-title tracking-wider" style="animation-delay: 0.3s">정답 제출</button>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-2', "돌발 상황: 대열 이탈(미아)<br>당황하지 말고 가장 안전하고 확실하게 대처하는 방법을 선택하세요.");
+        }
+
+        function renderZone3() {
+            STATE.tempData.z3_seq = [];
+            const places = [
+                {id: 1, name: "서대문형무소", num: 1}, {id: 2, name: "독립기념관", num: 2},
+                {id: 4, name: "국립중앙박물관", num: 4}, {id: 5, name: "롯데월드", num: 5},
+                {id: 7, name: "에버랜드", num: 7}, {id: 8, name: "한국민속촌", num: 8}, {id: 9, name: "경주박물관", num: 9}
+            ].sort(() => Math.random() - 0.5);
+
+            window.togglePlace = (num) => {
+                const btn = document.querySelector(`.place-btn[data-num="${num}"]`);
+                const idx = STATE.tempData.z3_seq.indexOf(num);
+                if (idx > -1) {
+                    STATE.tempData.z3_seq.splice(idx, 1); btn.classList.remove('selected'); btn.querySelector('.badge').classList.add('hidden');
+                } else if(STATE.tempData.z3_seq.length < 3) {
+                    STATE.tempData.z3_seq.push(num); btn.classList.add('selected'); btn.querySelector('.badge').classList.remove('hidden');
+                }
+                document.querySelectorAll('.place-btn').forEach(b => {
+                    const pos = STATE.tempData.z3_seq.indexOf(parseInt(b.dataset.num));
+                    if(pos > -1) b.querySelector('.badge').innerText = pos + 1;
+                });
+            };
+
+            window.checkZone3 = () => {
+                const hotel = document.querySelector('input[name="hotel"]:checked');
+                const code = STATE.tempData.z3_seq.join('');
+                if (code !== "472" || !hotel || hotel.value !== "3") { takeDamage(); return; }
+                
+                STATE.words[2] = "다"; updateHeader();
+                showModal('암호 해독 성공', '내가 어디에 있는지 알아야 길을 잃었을 때 돌아올 수 있습니다. 일정표를 머릿속에 꼭 넣어두세요.<br><br>세 번째 글자 <strong class="text-xl text-blue-700 font-title">[다]</strong> 획득 완료.', 'info', '다음 카드로', () => nextZone());
+            };
+
+            let html = createStoryBox("3", "세 번째 단서", "fa-solid fa-map-location-dot");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-left deal-animation bg-white" style="animation-delay: 0.15s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-magnifying-glass text-blue-600 mr-1"></i> 숨겨진 단서 탐색</h3>
+                    <p class="text-[0.7rem] text-gray-500 font-bold mb-2">순서가 뒤섞인 투명 잉크 조각들을 모아, 우리가 갈 3곳과 숙소를 추리해 내세요.</p>
+                    <div class="flashlight-wrapper rounded border-2 border-gray-800 shadow-inner h-[320px]" 
+                         onmousemove="updateFlashlight(event)" ontouchmove="updateFlashlight(event)" onmouseleave="resetFlashlight(event)" ontouchend="resetFlashlight(event)">
+                        <div class="flashlight-text font-hand break-keep leading-tight text-xl pt-6">
+                            [SYS.LOG] #DECRYPTING_DATA...<br>
+                            > 단서 A : <span class="uv-ink">에 ■ 랜 ■</span><br>
+                            > 단서 B : <span class="uv-ink">독 ■ 기 ■ 관</span><br>
+                            > 단서 C : <span class="uv-ink">국립 ■ ■ 박물관</span><br>
+                            <br>
+                            <span class="text-[0.8rem] text-gray-400 font-sans tracking-tight leading-none block my-2 border-t border-gray-700 pt-2">
+                                [ERR] LOCATING BASECAMP...
+                            </span>
+                            > 지역 : <span class="uv-ink">동탄 (Dongtan)</span><br>
+                            > 단서 : <span class="uv-ink font-title text-[1.8rem] text-yellow-300 inline-block drop-shadow-md">스타즈프리미어</span>
+                        </div>
+                        <div class="flashlight-overlay"></div>
+                    </div>
+                </div>
+                <div class="board-card p-4 mb-6 card-tilted-right deal-animation bg-[#fdfbf7]" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-bed text-blue-600 mr-1"></i> 숙소 선택</h3>
+                    <div class="flex flex-col gap-2">
+                        ${["동탄 스타즈 호텔", "동탄 프리미어스타 호텔", "동탄 스타즈프리미어 호텔", "화성 스타즈프리미어 리조트"].map((h, i) => `
+                            <label class="option-token p-3 flex items-center gap-2">
+                                <input type="radio" name="hotel" value="${i+1}" class="w-4 h-4 accent-blue-600">
+                                <span class="text-sm font-bold text-gray-700">${h}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="board-card p-4 mb-6 card-tilted-left deal-animation bg-[#fdfbf7]" style="animation-delay: 0.3s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-route text-blue-600 mr-1"></i> 방문 일정 순서대로 선택 (3곳)</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${places.map(p => `
+                            <button class="place-btn option-token p-2 text-sm text-left flex justify-between items-center font-bold text-gray-700" data-num="${p.num}" onclick="togglePlace(${p.num})">
+                                <span>${p.name}</span>
+                                <span class="badge hidden bg-blue-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-xs shadow-sm"></span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+                <button onclick="checkZone3()" class="btn-primary font-title tracking-wider w-full py-4 text-lg deal-animation bg-blue-500 border-blue-900 text-white hover:bg-blue-600" style="animation-delay: 0.4s">경로 확정</button>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-3', "남아있는 조각을 어둠 속에 비추어 오늘 우리가 방문할 장소들과 묵게 될 숙소를 정확히 추리해 내세요.");
+        }
+
+        function renderZone4() {
+            STATE.tempData.z4_ox = {};
+            window.toggleOX = (qNum, answer) => {
+                STATE.tempData.z4_ox[qNum] = answer;
+                document.getElementById(`q${qNum}-o`).classList.remove('bg-blue-500', 'text-white', 'border-blue-700');
+                document.getElementById(`q${qNum}-x`).classList.remove('bg-red-500', 'text-white', 'border-red-700');
+                const btn = document.getElementById(`q${qNum}-${answer.toLowerCase()}`);
+                if(answer === 'O') btn.classList.add('bg-blue-500', 'text-white', 'border-blue-700');
+                else btn.classList.add('bg-red-500', 'text-white', 'border-red-700');
+            };
+            window.checkZone4 = () => {
+                const behavior = document.querySelector('input[name="behavior"]:checked');
+                const isOXCorrect = STATE.tempData.z4_ox[1]==='X' && STATE.tempData.z4_ox[2]==='O' && STATE.tempData.z4_ox[3]==='O' && STATE.tempData.z4_ox[4]==='O';
+                if (!isOXCorrect || !behavior || behavior.value !== "2") { takeDamage(); return; }
+                
+                STATE.words[3] = "함"; updateHeader();
+                showModal('암호 해독 성공', '가장 위험한 건 선생님 몰래 행동하는 것입니다. 차 안팎에서는 항상 안전이 우선!<br><br>네 번째 글자 <strong class="text-xl text-blue-700 font-title">[함]</strong> 획득 완료.', 'info', '다음 카드로', () => nextZone());
+            };
+
+            let html = createStoryBox("4", "네 번째 단서", "fa-solid fa-bus");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-right deal-animation bg-white" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-users text-blue-600 mr-1"></i> 친구들의 행동 판단</h3>
+                    ${[{q: 1, name: "뽀로로", text: "차가 서기도 전에 일어난다!"}, {q: 2, name: "손흥민", text: "내릴 때 인도 쪽을 살핀다."}, {q: 3, name: "페이커", text: "버스 뒤로 길 건너면 위험해."}, {q: 4, name: "유재석", text: "안전벨트는 꼭 매야 합니다~!"}].map(item => `
+                        <div class="flex flex-col mb-4 bg-gray-50 p-2 rounded border-2 border-gray-200">
+                            <span class="text-sm font-bold text-blue-800 mb-1">👤 ${item.name}</span>
+                            <div class="flex justify-between items-end">
+                                <span class="text-[0.8rem] w-[70%] font-medium break-keep">"${item.text}"</span>
+                                <div class="flex gap-2 w-[25%] justify-end shrink-0">
+                                    <button id="q${item.q}-o" onclick="toggleOX(${item.q}, 'O')" class="option-token w-8 h-8 text-sm font-black flex items-center justify-center text-gray-400 font-title">O</button>
+                                    <button id="q${item.q}-x" onclick="toggleOX(${item.q}, 'X')" class="option-token w-8 h-8 text-sm font-black flex items-center justify-center text-gray-400 font-title">X</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="board-card p-4 mb-6 card-tilted-left deal-animation bg-[#fdfbf7]" style="animation-delay: 0.3s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-triangle-exclamation text-red-600 mr-1"></i> 돌발 상황 대처</h3>
+                    <p class="text-[0.8rem] text-gray-800 font-bold mb-3 bg-red-100 p-2 rounded border border-red-200">휴게소 출발 3분 전! 화장실이 너무 급한데 줄이 길다면?</p>
+                    <div class="flex flex-col gap-2">
+                        ${["냅다 옆 건물로 무작정 뛴다.", "선생님께 먼저 상황을 알리고 여쭤본다.", "무조건 버스로 뛰어가서 꾹 참는다."].map((b, i) => `
+                            <label class="option-token p-3 flex items-start gap-2"><input type="radio" name="behavior" value="${i+1}" class="w-4 h-4 mt-1 accent-blue-600 shrink-0"><span class="text-[0.8rem] font-bold text-gray-700 break-keep">${b}</span></label>
+                        `).join('')}
+                    </div>
+                </div>
+                <button onclick="checkZone4()" class="btn-primary font-title tracking-wider w-full py-4 text-lg deal-animation bg-blue-500 border-blue-900 text-white hover:bg-blue-600" style="animation-delay: 0.4s">정답 제출</button>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-4', "안전하게 차를 타고 내리는 법과, 위급한 상황에서의 판단력을 점검하세요.");
+        }
+
+        function renderZone5() {
+            STATE.tempData.z5_items = [];
+            const items = [
+                {id: 'S', text: "키카드 분실시 알리지 않는다."}, {id: 'H', text: "밤늦게 복도에서 뛰지 않는다."},
+                {id: 'X', text: "침대 위에서 뛴다."}, {id: 'P', text: "다른 방으로 몰래 이동한다."},
+                {id: 'O', text: "방문 잠금장치를 확인한다."}, {id: 'T', text: "공용 화장실 사용 후엔 정리한다."},
+                {id: 'A', text: "모르는 사람에게 문을 연다."}, {id: 'E', text: "비상구 위치를 미리 확인한다."},
+                {id: 'L', text: "호텔 물품을 함부로 다루지 않는다."}
+            ];
+
+            window.toggleLetter = (id) => {
+                const btn = document.getElementById(`letter-${id}`);
+                const idx = STATE.tempData.z5_items.indexOf(id);
+                if (idx > -1) {
+                    STATE.tempData.z5_items.splice(idx, 1); btn.classList.remove('selected');
+                } else if(STATE.tempData.z5_items.length < 5) {
+                    STATE.tempData.z5_items.push(id); btn.classList.add('selected');
+                }
+                const slots = document.getElementById('hotel-slots'); slots.innerHTML = '';
+                for(let i=0; i<5; i++) {
+                    const char = STATE.tempData.z5_items[i] || '';
+                    slots.innerHTML += `<div class="w-10 h-12 bg-white border-4 border-gray-900 rounded flex items-center justify-center text-xl font-black ${char ? 'text-black' : 'text-gray-300 bg-gray-100 border-dashed'}">${char}</div>`;
+                }
+            };
+            window.checkZone5 = () => {
+                if (STATE.tempData.z5_items.sort().join('') !== 'EHLOT') { takeDamage(); return; }
+                STATE.words[4] = "께"; updateHeader();
+                showModal('암호 해독 성공', '예의를 지키는 멋진 학생이 됩시다!<br><br>다섯 번째 글자 <strong class="text-xl text-blue-700 font-title">[께]</strong> 획득 완료.', 'info', '다음 카드로', () => nextZone());
+            }
+
+            let html = createStoryBox("5", "다섯 번째 단서", "fa-solid fa-hotel");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-right deal-animation bg-white" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-bell text-blue-600 mr-1"></i> 올바른 숙소 매너 찾기 (5가지)</h3>
+                    <div class="flex flex-col gap-3 mb-6">
+                        ${items.map(item => `
+                            <div class="flex items-center gap-3">
+                                <div id="letter-${item.id}" onclick="toggleLetter('${item.id}')" class="letter-tile shrink-0 font-title">${item.id}</div>
+                                <span class="text-sm font-bold text-gray-700 leading-snug break-keep">${item.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded-lg border-2 border-gray-300 flex flex-col items-center">
+                        <div class="flex gap-2" id="hotel-slots">${[1,2,3,4,5].map(() => `<div class="w-10 h-12 bg-white border-2 border-dashed border-gray-400 rounded"></div>`).join('')}</div>
+                    </div>
+                </div>
+                <button onclick="checkZone5()" class="btn-primary font-title tracking-wider w-full py-4 text-lg deal-animation bg-blue-500 border-blue-900 text-white hover:bg-blue-600" style="animation-delay: 0.4s">단어 완성하기</button>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-5', "올바른 매너 5가지를 골라 보안 시스템의 영단어 타일을 완성하세요.");
+        }
+
+        function renderZone6() {
+            STATE.tempData.z6_ox = {};
+            window.toggleNightOX = (qNum, answer) => {
+                STATE.tempData.z6_ox[qNum] = answer;
+                document.getElementById(`nq${qNum}-o`).classList.remove('bg-blue-500', 'text-white', 'border-blue-700');
+                document.getElementById(`nq${qNum}-x`).classList.remove('bg-red-500', 'text-white', 'border-red-700');
+                const btn = document.getElementById(`nq${qNum}-${answer.toLowerCase()}`);
+                if(answer === 'O') btn.classList.add('bg-blue-500', 'text-white', 'border-blue-700');
+                else btn.classList.add('bg-red-500', 'text-white', 'border-red-700');
+            };
+            window.checkZone6 = () => {
+                if (!(STATE.tempData.z6_ox[1]==='O' && STATE.tempData.z6_ox[2]==='X' && STATE.tempData.z6_ox[3]==='O' && STATE.tempData.z6_ox[4]==='X' && STATE.tempData.z6_ox[5]==='X')) { takeDamage(); return; }
+                STATE.words[5] = "무"; updateHeader();
+                showModal('암호 해독 성공', '위급 상황 시 주저하지 말고 밖으로 나와 야간 요원이나 선생님께 직접 알리세요!<br><br>여섯 번째 글자 <strong class="text-xl text-blue-700 font-title">[무]</strong> 획득 완료.', 'info', '다음 카드로', () => nextZone());
+            }
+
+            let html = createStoryBox("6", "여섯 번째 단서", "fa-solid fa-moon");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-left deal-animation bg-white" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-clipboard-check text-blue-600 mr-1"></i> 야간 행동 규칙 (O/X)</h3>
+                    <div class="flex flex-col gap-4">
+                        ${[{q: 1, text: "밤에 불을 끈 후에는 방에만 있는다."}, {q: 2, text: "친구가 아파도 아침까지 기다린다."}, {q: 3, text: "창밖으로 물건을 던지지 않는다."}, {q: 4, text: "선생님 몰래 편의점에 다녀온다."}, {q: 5, text: "불이 나면 엘리베이터를 탄다."}].map(item => `
+                            <div class="flex justify-between items-center bg-[#f8fafc] border-2 border-gray-200 p-2 rounded shadow-sm">
+                                <span class="text-[0.8rem] w-[75%] font-bold break-keep">${item.q}. ${item.text}</span>
+                                <div class="flex gap-2 w-[25%] justify-end">
+                                    <button id="nq${item.q}-o" onclick="toggleNightOX(${item.q}, 'O')" class="option-token w-8 h-8 text-sm font-black flex items-center justify-center text-gray-400 font-title">O</button>
+                                    <button id="nq${item.q}-x" onclick="toggleNightOX(${item.q}, 'X')" class="option-token w-8 h-8 text-sm font-black flex items-center justify-center text-gray-400 font-title">X</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <button onclick="checkZone6()" class="btn-primary font-title tracking-wider w-full py-4 text-lg deal-animation bg-blue-500 border-blue-900 text-white hover:bg-blue-600" style="animation-delay: 0.3s">최종 점검</button>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-6', "나와 친구들의 안전을 지키기 위한 야간 수칙 카드를 정확히 확인하세요.");
+        }
+
+        function renderZone7() {
+            STATE.tempData.gameItems = []; STATE.tempData.score = 0; STATE.tempData.gameRunning = false;
+            let loopId, dropId;
+            window.startGame = () => {
+                document.getElementById('start-overlay').classList.add('hidden');
+                STATE.tempData.gameRunning = true; STATE.tempData.score = 0; document.getElementById('score-display').innerText = '0 / 3';
+                dropId = setInterval(spawnItem, 1000); gameLoop();
+            };
+            function spawnItem() {
+                if(!STATE.tempData.gameRunning) return;
+                const container = document.getElementById('game-container');
+                const isGood = Math.random() > 0.45;
+                const goodList = [{emoji: '🧼', text: '손 씻기'}, {emoji: '💧', text: '깨끗한 물'}, {emoji: '😷', text: '마스크'}];
+                const badList = [{emoji: '🦠', text: '더러운 손'}, {emoji: '🤧', text: '기침 튀기기'}, {emoji: '🍽️', text: '음식 공유'}];
+                const data = isGood ? goodList[Math.floor(Math.random()*goodList.length)] : badList[Math.floor(Math.random()*badList.length)];
+                
+                const item = document.createElement('div'); item.className = 'absolute flex flex-col items-center justify-center pointer-events-none drop-item';
+                item.innerHTML = `<span class="text-3xl filter drop-shadow-sm">${data.emoji}</span><span class="text-[0.65rem] font-black bg-white/90 px-1 mt-1 rounded border border-gray-300 text-gray-700 whitespace-nowrap shadow-sm">${data.text}</span>`;
+                item.dataset.type = isGood ? 'good' : 'bad';
+                item.style.left = `${15 + Math.random() * 70}%`; item.style.top = `-50px`; item.style.transform = `translateX(-50%)`;
+                item.dataset.speed = 1.5 + Math.random() * 1.5; 
+                container.appendChild(item); STATE.tempData.gameItems.push(item);
+            }
+            function gameLoop() {
+                if(!STATE.tempData.gameRunning) return;
+                const pRect = document.getElementById('game-player').getBoundingClientRect();
+                const containerRect = document.getElementById('game-container').getBoundingClientRect();
+                for(let i = STATE.tempData.gameItems.length - 1; i >= 0; i--) {
+                    const item = STATE.tempData.gameItems[i];
+                    let currentTop = parseFloat(item.style.top); currentTop += parseFloat(item.dataset.speed); item.style.top = `${currentTop}px`;
+                    const iRect = item.getBoundingClientRect();
+                    
+                    if (iRect.left < pRect.right - 15 && iRect.right > pRect.left + 15 && iRect.top < pRect.bottom - 15 && iRect.bottom > pRect.top + 15) {
+                        if(item.dataset.type === 'good') {
+                            STATE.tempData.score++; document.getElementById('score-display').innerText = `${STATE.tempData.score} / 3`;
+                            item.remove(); STATE.tempData.gameItems.splice(i, 1);
+                            if(STATE.tempData.score >= 3) {
+                                STATE.tempData.gameRunning = false; clearInterval(dropId);
+                                STATE.words[6] = "사"; updateHeader();
+                                showModal('<i class="fa-solid fa-shield-halved"></i> 위생 방어 성공', '일곱 번째 글자 <strong class="text-xl text-blue-700 font-title">[사]</strong> 획득 완료.', 'info', '다음 카드로', () => nextZone());
+                            }
+                        } else {
+                            STATE.tempData.gameRunning = false; clearInterval(dropId); item.remove(); STATE.tempData.gameItems.splice(i, 1);
+                            takeDamage('<i class="fa-solid fa-virus"></i> 감염 위험!', '나쁜 위생 습관을 획득했습니다! 다시 도전하세요.', () => {
+                                STATE.tempData.gameItems.forEach(el => el.remove()); STATE.tempData.gameItems = [];
+                                document.getElementById('start-overlay').classList.remove('hidden'); document.getElementById('start-overlay').innerHTML = "다시 시작하기";
+                            });
+                        }
+                    } else if (currentTop > containerRect.height) { item.remove(); STATE.tempData.gameItems.splice(i, 1); }
+                }
+                if(STATE.tempData.gameRunning) loopId = requestAnimationFrame(gameLoop);
+            }
+            window.movePlayer = (e) => {
+                if(!STATE.tempData.gameRunning) return;
+                const rect = document.getElementById('game-container').getBoundingClientRect();
+                let x = (e.touches && e.touches.length > 0 ? e.touches[0].clientX : e.clientX) - rect.left;
+                document.getElementById('game-player').style.left = `${Math.max(30, Math.min(rect.width - 30, x))}px`;
+            };
+
+            let html = createStoryBox("7", "일곱 번째 단서", "fa-solid fa-hands-bubbles");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-right deal-animation bg-white" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-solid fa-shield-virus text-blue-600 mr-1"></i> 감염병 예방 블록 잡기</h3>
+                    <p class="text-[0.7rem] font-bold mb-3">바구니를 드래그해서 <strong class="text-blue-600">올바른 위생 습관 3개</strong>를 담으세요!</p>
+                    <div id="game-container" class="relative w-full h-64 bg-[#f8fafc] border-4 border-gray-800 rounded-lg overflow-hidden touch-none" onmousemove="movePlayer(event)" ontouchmove="movePlayer(event)">
+                        <div id="start-overlay" class="absolute inset-0 bg-black/70 z-20 flex flex-col items-center justify-center cursor-pointer text-white font-title text-2xl tracking-wider" onclick="startGame()">터치해서 시작</div>
+                        <div class="absolute top-2 right-2 bg-blue-600 text-white font-title px-3 py-1 rounded shadow-md text-sm z-10 border-2 border-gray-900" id="score-display">0 / 3</div>
+                        <div id="game-player" class="absolute bottom-2 w-14 h-14 bg-white border-4 border-gray-800 rounded-full flex items-center justify-center shadow-md z-10" style="left: 50%; transform: translateX(-50%);"><span class="text-2xl">🛒</span></div>
+                    </div>
+                </div>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-7', "떨어지는 행동 블록들 중 올바른 위생 습관만 골라 담으세요!");
+        }
+
+        function renderZone8() {
+            STATE.tempData.z8_crimes = [];
+            window.toggleSnsCrime = (num) => {
+                const btn = document.getElementById(`sns-${num}`);
+                const idx = STATE.tempData.z8_crimes.indexOf(num);
+                if(idx > -1) { STATE.tempData.z8_crimes.splice(idx, 1); btn.classList.remove('selected'); } 
+                else { STATE.tempData.z8_crimes.push(num); btn.classList.add('selected'); }
+            };
+            window.checkZone8 = () => {
+                if (STATE.tempData.z8_crimes.sort().join('') !== '1235') { takeDamage(); return; }
+                STATE.words[7] = "히"; updateHeader();
+                showModal('해독 최종 완료', '장난이 엄연한 범죄가 될 수 있습니다.<br><br>마지막 글자 <strong class="text-xl text-blue-700 font-title">[히]</strong> 획득 완료.', 'info', '서약서 작성', () => nextZone());
+            }
+
+            let html = createStoryBox("8", "마지막 단서", "fa-solid fa-mobile-screen");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-right deal-animation bg-white" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-3"><i class="fa-brands fa-instagram text-pink-600 mr-1"></i> 삭제해야 할 게시물 찾기</h3>
+                    <div class="flex flex-col gap-2">
+                        ${["자는 친구 얼굴을 몰래 찍어서 반 단톡방에 올리기", "다친 걸 보며 웃는 동영상을 틱톡에 올리기", "옷 갈아입는 모습을 몰래 찍기", "허락받고 찍은 단체 사진을 올리기", "친구 얼굴을 엽기적으로 합성해서 퍼뜨리기"].map((c, i) => `
+                            <button id="sns-${i+1}" onclick="toggleSnsCrime(${i+1})" class="option-token p-3 text-[0.8rem] text-left font-bold text-gray-700 flex items-start gap-2 leading-snug">
+                                <span class="text-pink-600 mt-[2px]"><i class="fa-solid fa-trash-can"></i></span>${c}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+                <button onclick="checkZone8()" class="btn-primary font-title tracking-wider w-full py-4 text-lg deal-animation bg-red-500 border-red-900 text-white hover:bg-red-600" style="animation-delay: 0.3s">삭제하기</button>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-8', "선십을 넘은 사이버 폭력 게시물들을 골라내 파기하십시오.");
+        }
+
+        function renderZone9() {
+            window.submitPledge = () => {
+                const agree = document.getElementById('agree-check').checked;
+                const sInfo = document.getElementById('student-info').value.trim();
+                const sPledge = document.getElementById('student-pledge').value.trim();
+
+                if(!agree) { showModal('동의 필요', '안전 수칙을 준수한다는 서약에 체크해 주세요.', 'error'); return; }
+                if(!sInfo || !sPledge) { showModal('정보 누락', '소속과 다짐을 모두 적어주세요.', 'error'); return; }
+
+                STATE.studentInfo = sInfo;
+                STATE.studentPledge = sPledge;
+                
+                const btn = document.getElementById('submit-btn');
+                btn.innerText = "서약서 전송 중...";
+                btn.disabled = true;
+
+                if (GOOGLE_SCRIPT_URL === "여기에_웹앱_URL_붙여넣기") {
+                    showModal('주의', '앱스 스크립트 URL이 설정되지 않았습니다. 테스트 모드로 다음으로 넘어갑니다.', 'info', '결과 확인', () => nextZone());
+                    return;
+                }
+
+                const formData = new URLSearchParams();
+                formData.append('name', sInfo);
+                formData.append('pledge', sPledge);
+                formData.append('nickname', STATE.teamName);
+                formData.append('chips', STATE.chips);
+
+                fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: formData, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+                .then(response => nextZone())
+                .catch(error => { alert('전송에 실패했습니다. 인터넷을 확인해주세요.'); btn.innerText = "서약서 제출 및 완료"; btn.disabled = false; });
+            };
+
+            let html = createStoryBox("9", "최종 관문", "fa-solid fa-file-signature");
+            html += `
+                <div class="board-card p-4 mb-6 card-tilted-right deal-animation bg-white" style="animation-delay: 0.2s">
+                    <h3 class="font-bold text-gray-800 border-b-2 border-gray-300 pb-2 mb-4 font-title text-xl text-center">안전 체험학습 서약서</h3>
+                    
+                    <div class="bg-gray-100 p-3 rounded text-sm text-gray-700 font-bold mb-4 leading-relaxed border border-gray-300">
+                        1. 선생님의 지시를 잘 따르겠습니다.<br>
+                        2. 위험한 행동으로 모두를 놀라게 하지 않겠습니다.<br>
+                        3. 친구와 사이좋게 지내며 서로 돕겠습니다.<br>
+                        4. 획득한 암호 <strong class="text-red-600">"우.리.다.함.께.무.사.히"</strong> 를 잊지 않겠습니다.
+                    </div>
+                    
+                    <label class="flex items-center gap-2 mb-6 bg-blue-50 p-3 rounded border border-blue-200 cursor-pointer">
+                        <input type="checkbox" id="agree-check" class="w-5 h-5 accent-blue-600">
+                        <span class="font-bold text-blue-900 text-sm">위의 모든 안전 수칙을 준수할 것을 굳게 서약합니다. (필수)</span>
+                    </label>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-gray-500 mb-1">소속 (반 번호 이름)</label>
+                        <input type="text" id="student-info" class="w-full border-2 border-gray-300 p-2 rounded focus:border-blue-500 outline-none font-bold text-sm" placeholder="예: 3반 15번 허승아">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-gray-500 mb-1">나의 특별한 다짐 한 줄</label>
+                        <input type="text" id="student-pledge" class="w-full border-2 border-gray-300 p-2 rounded focus:border-blue-500 outline-none font-bold text-sm" placeholder="즐겁고 안전하게 다녀오겠습니다!">
+                    </div>
+                </div>
+                <button id="submit-btn" onclick="submitPledge()" class="btn-primary font-title tracking-wider w-full py-4 text-lg deal-animation bg-green-600 border-green-900 text-white hover:bg-green-700" style="animation-delay: 0.3s">서약서 제출 및 완료</button>
+            `;
+            elMain.innerHTML = html;
+            typeWriter('story-text-9', "모든 암호를 해독했습니다! 마지막으로 안전하고 책임감 있는 여행을 위한 서약서를 작성해 주세요.");
+        }
+
+        function renderZone10() {
+            elHeader.classList.add('hidden');
+            elFooter.classList.add('hidden');
+            
+            let grade = 'C'; let title = '안전 불감증 플레이어'; let gradeColor = 'text-gray-500';
+            if(STATE.chips === 5) { grade = 'S'; title = '완벽한 생존 전문가'; gradeColor = 'text-yellow-500'; } 
+            else if(STATE.chips >= 3) { grade = 'A'; title = '훌륭한 모범 플레이어'; gradeColor = 'text-blue-500'; } 
+            else if(STATE.chips >= 1) { grade = 'B'; title = '노력이 필요한 플레이어'; gradeColor = 'text-green-500'; }
+
+            let html = `
+                <div class="flex flex-col items-center justify-center min-h-[90vh] text-center pt-4 pb-12 px-2 deal-animation">
+                    <h1 class="font-title text-4xl tracking-widest mb-6 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] z-10">MISSION SUCCESS</h1>
+                    
+                    <div class="board-card w-full p-5 mb-6 text-left relative overflow-hidden bg-[#fdfbf7]">
+                        <div class="absolute inset-0 z-0 opacity-80">
+                            <img src="bus_sunset.png" alt="무사 귀환 배경" onerror="this.src='https://placehold.co/400x400/244223/ffffff';" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-white/80"></div>
+                        </div>
+                        <div class="absolute -top-4 -right-4 text-[8rem] text-gray-800 opacity-20 font-black transform rotate-12 z-0"><i class="fa-solid fa-stamp"></i></div>
+                        
+                        <h2 class="font-title text-2xl text-gray-900 mb-4 border-b-4 border-gray-800 pb-2 relative z-10 tracking-wide">안전 교육 수료증</h2>
+                        
+                        <div class="relative z-10 mb-4 bg-white/90 p-3 rounded border border-gray-300 shadow-sm text-sm font-bold text-gray-800">
+                            <div class="mb-1"><span class="text-gray-500 text-xs">소속/이름:</span> ${STATE.studentInfo}</div>
+                            <div class="mb-1"><span class="text-gray-500 text-xs">닉네임:</span> ${STATE.teamName}</div>
+                            <div class="italic text-blue-700 mt-2">"${STATE.studentPledge}"</div>
+                        </div>
+                        
+                        <div class="bg-white/90 p-4 border-2 border-gray-400 rounded-lg relative z-10 shadow-sm text-center backdrop-blur-sm">
+                            <p class="font-title text-sm text-gray-500 mb-2 tracking-wider">YOUR SURVIVAL RANK</p>
+                            <div class="font-title text-6xl ${gradeColor} drop-shadow-md mb-2">${grade} <span class="text-3xl text-gray-800">등급</span></div>
+                            <p class="text-sm font-bold text-gray-700">남은 생존 칩(하트): ${STATE.chips} / 5</p>
+                        </div>
+                    </div>
+
+                    <div class="board-card w-full p-4 mb-8 bg-[#1a202c] border-gray-900 text-white z-10">
+                        <h3 class="font-title text-xl text-yellow-400 mb-2 tracking-wide">총평: ${title}</h3>
+                        <p class="text-sm text-gray-300 break-keep leading-relaxed">이 화면을 캡처하여 선생님께 제출해 주세요!</p>
+                    </div>
+                </div>
+            `;
+            elMain.innerHTML = html;
+        }
+
+        function renderCurrentZone() {
+            switch(STATE.zone) {
+                case 0: renderZone0(); break;
+                case 1: renderZone1(); break;
+                case 2: renderZone2(); break;
+                case 3: renderZone3(); break;
+                case 4: renderZone4(); break;
+                case 5: renderZone5(); break;
+                case 6: renderZone6(); break;
+                case 7: renderZone7(); break;
+                case 8: renderZone8(); break;
+                case 9: renderZone9(); break;
+                case 10: renderZone10(); break;
+            }
+        }
+        renderCurrentZone();
+    </script>
+</body>
+</html>
